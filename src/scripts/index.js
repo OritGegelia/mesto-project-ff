@@ -29,3 +29,5 @@ function addCard(initialCards) {
 initialCards.forEach((card) => {
   addCard(card, deleteCard);
 });
+
+const popup = document.querySelector('.popup')
