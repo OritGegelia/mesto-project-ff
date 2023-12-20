@@ -1,4 +1,3 @@
-import { escape } from "core-js/fn/regexp";
 import "./pages/index.css";
 import { initialCards } from "./scripts/cards.js";
 
@@ -13,7 +12,7 @@ const cardPopupImage = document.querySelector(".popup__image");
 
 const addPopupButton = document.querySelector(".profile__add-button");
 const editPopupButton = document.querySelector(".profile__edit-button");
-const closePopupButton = document.querySelector(".popup__close");
+const closePopupButton = document.querySelectorAll(".popup__close");
 
 // Добавление попапам класса с анимацией при загрузке страницы
 
@@ -38,7 +37,7 @@ function likeCard(evt) {
 
 // Создание новой карточки
 
-function createCard(initialCards, deleteCard, likeCard, imagePopupOpener) {
+function createCard(initialCards, deleteCard, likeCard, imagePopupOpener, buttonCloseModal) {
   const cardElement = cardTemplate
     .querySelector(".places__item")
     .cloneNode(true);
@@ -75,15 +74,68 @@ initialCards.forEach((card) => {
   addCard(card, deleteCard);
 });
 
-// Закрытие попапа кликом на крестик
+// Закрытие попапа всем подряд
 
+function popupHandleCloser(popup) {
+  popup.classList.remove("popup_is-opened");
+  document.removeEventListener('keydown', escapeCloseModal);
+  document.removeEventListener('click', clickCloseModal);
+}
+
+function buttonCloseModal() {
+  const popup = document.querySelector('.popup_is-opened')
+  popup.classList.remove("popup_is-opened")
+
+  console.log('Test');
+}
+
+closePopupButton.forEach((button) => {
+  button.addEventListener('click', buttonCloseModal);
+});
+
+// function buttonCloseModal(evt) {
+//   const popup = document.querySelector('.popup_is-opened');
+
+//   if (evt.target === closePopupButton) {
+//     popup.classList.remove("popup_is-opened")
+//   }
+// }
+
+
+function clickCloseModal(evt) {
+  const popup = document.querySelector('.popup_is-opened')
+  if (evt.target !== popup) {
+    evt.stopPropagation();
+  } else {
+    popup.classList.remove("popup_is-opened");
+  };
+}
+
+
+function escapeCloseModal(evt) {
+  const popup = document.querySelector('.popup_is-opened')
+  if (evt.code === "Escape") {
+    popup.classList.remove("popup_is-opened");
+  }
+}
+
+function popupHandleOpener(popup) {
+  popupHandleCloser(popup);
+  
+  popup.classList.add("popup_is-opened");
+
+  document.addEventListener('keydown', escapeCloseModal);
+  document.addEventListener('click', clickCloseModal);
+
+  popup.addEventListener("submit", () => {
+    popupHandleCloser(popup);
+  });
+}
 
 
 addPopupButton.addEventListener("click", () => popupHandleOpener(addPopup));
 editPopupButton.addEventListener("click", () => popupHandleOpener(editPopup));
 imagePopup.addEventListener("click", () => popupHandleOpener(imagePopup));
-
-closePopupButton.addEventListener("click", popupHandleCloser);
 
 // Форма редактирования профиля
 
