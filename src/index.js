@@ -1,10 +1,21 @@
 import "./pages/index.css";
-import { initialCards } from "./scripts/cards.js";
 
-const cardTemplate = document.querySelector("#card-template").content;
+import {
+  initialCards,
+  createCard,
+  deleteCard,
+  likeCard,
+} from "./components/cards.js";
+
+import {
+  clickCloseModal,
+  escapeCloseModal,
+  popupHandleOpener,
+} from "./components/module.js";
+
 const cardsContainer = document.querySelector(".places__list");
 
-const popup = document.querySelector(".popup");
+const popups = document.querySelectorAll(".popup");
 const editPopup = document.querySelector(".popup_type_edit");
 const addPopup = document.querySelector(".popup_type_new-card");
 const imagePopup = document.querySelector(".popup_type_image");
@@ -12,49 +23,19 @@ const cardPopupImage = document.querySelector(".popup__image");
 
 const addPopupButton = document.querySelector(".profile__add-button");
 const editPopupButton = document.querySelector(".profile__edit-button");
-const closePopupButton = document.querySelectorAll(".popup__close");
 
-// Добавление попапам класса с анимацией при загрузке страницы
+// Добавление попапам класса с анимацией при загрузке страницы.
+// Изначально добавление класса popup_is-animated было прописано в функции открытия,
+// но тогда при первом открытии анимация не срабатывала и я решила
+// что логичнее добавлять класс сразу же при загрузке - тогда он работает и при первом открытии
 
-document.addEventListener("DOMContentLoaded", function () {
+function popupAnimation(popup) {
   popup.classList.add("popup_is-animated");
+}
+
+popups.forEach((popup) => {
+  popupAnimation(popup);
 });
-
-// Удаление карточки
-
-function deleteCard(evt) {
-  const card = evt.target.closest(".places__item");
-  card.remove();
-}
-
-// Лайк карточки
-
-function likeCard(evt) {
-  if (evt.target.classList.contains("card__like-button")) {
-    evt.target.classList.toggle("card__like-button_is-active");
-  }
-}
-
-// Создание новой карточки
-
-function createCard(initialCards, deleteCard, likeCard, imagePopupOpener, buttonCloseModal) {
-  const cardElement = cardTemplate
-    .querySelector(".places__item")
-    .cloneNode(true);
-
-  const deleteButton = cardElement.querySelector(".card__delete-button");
-  const likeButton = cardElement.querySelector(".card__like-button");
-
-  cardElement.querySelector(".card__title").textContent = initialCards.name;
-  cardElement.querySelector(".card__image").src = initialCards.link;
-  cardElement.querySelector(".card__image").alt = initialCards.name;
-
-  deleteButton.addEventListener("click", deleteCard);
-  likeButton.addEventListener("click", likeCard);
-  cardElement.addEventListener("click", imagePopupOpener);
-
-  return cardElement;
-}
 
 // Добавление новой карточки на страницу
 
@@ -65,77 +46,22 @@ function addCard(initialCards) {
     likeCard,
     imagePopupOpener
   );
-  cardsContainer.insertBefore(newCard, cardsContainer.firstChild);
+
+  cardsContainer.insertBefore(newCard, cardsContainer.firstChild); // для реализации добавления новых карточек в начало
 
   return newCard;
 }
+
+// Цикл, перебирающий массив карточек
 
 initialCards.forEach((card) => {
   addCard(card, deleteCard);
 });
 
-// Закрытие попапа всем подряд
-
-function popupHandleCloser(popup) {
-  popup.classList.remove("popup_is-opened");
-  document.removeEventListener('keydown', escapeCloseModal);
-  document.removeEventListener('click', clickCloseModal);
-}
-
-function buttonCloseModal() {
-  const popup = document.querySelector('.popup_is-opened')
-  popup.classList.remove("popup_is-opened")
-
-  console.log('Test');
-}
-
-closePopupButton.forEach((button) => {
-  button.addEventListener('click', buttonCloseModal);
-});
-
-// function buttonCloseModal(evt) {
-//   const popup = document.querySelector('.popup_is-opened');
-
-//   if (evt.target === closePopupButton) {
-//     popup.classList.remove("popup_is-opened")
-//   }
-// }
-
-
-function clickCloseModal(evt) {
-  const popup = document.querySelector('.popup_is-opened')
-  if (evt.target !== popup) {
-    evt.stopPropagation();
-  } else {
-    popup.classList.remove("popup_is-opened");
-  };
-}
-
-
-function escapeCloseModal(evt) {
-  const popup = document.querySelector('.popup_is-opened')
-  if (evt.code === "Escape") {
-    popup.classList.remove("popup_is-opened");
-  }
-}
-
-function popupHandleOpener(popup) {
-  popupHandleCloser(popup);
-  
-  popup.classList.add("popup_is-opened");
-
-  document.addEventListener('keydown', escapeCloseModal);
-  document.addEventListener('click', clickCloseModal);
-
-  popup.addEventListener("submit", () => {
-    popupHandleCloser(popup);
-  });
-}
-
+// Слушатели открытия модалок редактирования и добавления карточки
 
 addPopupButton.addEventListener("click", () => popupHandleOpener(addPopup));
 editPopupButton.addEventListener("click", () => popupHandleOpener(editPopup));
-imagePopup.addEventListener("click", () => popupHandleOpener(imagePopup));
 
 // Форма редактирования профиля
 
@@ -146,6 +72,11 @@ const jobInput = editFormElement.querySelector('input[name="description"]');
 
 const profileName = document.querySelector(".profile__title");
 const profileJob = document.querySelector(".profile__description");
+
+const currentName = profileName.textContent;
+const currentJob = profileJob.textContent;
+nameInput.value = currentName;
+jobInput.value = currentJob;
 
 function handleFormSubmit(evt) {
   evt.preventDefault();
@@ -179,8 +110,6 @@ function handleAddSubmit(evt) {
   addCard(newPlaceData, deleteCard);
 
   addFormElement.reset();
-
-  console.log(initialCards);
 }
 
 addFormElement.addEventListener("submit", handleAddSubmit);
@@ -188,6 +117,13 @@ addFormElement.addEventListener("submit", handleAddSubmit);
 // Открытие попапа с картинкой.
 
 function imagePopupOpener(evt) {
+  if (
+    evt.target.classList.contains("card__delete-button") ||
+    evt.target.classList.contains("card__like-button")
+  ) {
+    return;
+  }
+
   const card = evt.target.closest(".places__item");
   const cardImage = card.querySelector(".card__image");
 
@@ -195,6 +131,7 @@ function imagePopupOpener(evt) {
   cardPopupImage.alt = cardImage.alt;
 
   imagePopup.classList.add("popup_is-opened");
+
+  document.addEventListener("keydown", escapeCloseModal);
+  document.addEventListener("click", clickCloseModal);
 }
-
-
