@@ -90,7 +90,7 @@ function handleAddSubmit(evt) {
 
 addFormElement.addEventListener("submit", handleAddSubmit);
 
-// Открытие попапа с картинкой.
+// Открытие попапа с картинкой
 
 function imagePopupOpener(evt) {
   if (
