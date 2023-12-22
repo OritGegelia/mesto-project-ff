@@ -31,7 +31,7 @@ const cardTemplate = document.querySelector("#card-template").content;
 
 // Создание карточки из темплейта
 
-function createCard(initialCards, deleteCard, likeCard, imagePopupOpener) {
+function createCard(card, deleteCard, likeCard, imagePopupOpener) {
   const cardElement = cardTemplate
     .querySelector(".places__item")
     .cloneNode(true);
@@ -39,9 +39,9 @@ function createCard(initialCards, deleteCard, likeCard, imagePopupOpener) {
   const deleteButton = cardElement.querySelector(".card__delete-button");
   const likeButton = cardElement.querySelector(".card__like-button");
 
-  cardElement.querySelector(".card__title").textContent = initialCards.name;
-  cardElement.querySelector(".card__image").src = initialCards.link;
-  cardElement.querySelector(".card__image").alt = initialCards.name;
+  cardElement.querySelector(".card__title").textContent = card.name;
+  cardElement.querySelector(".card__image").src = card.link;
+  cardElement.querySelector(".card__image").alt = card.name;
 
   deleteButton.addEventListener("click", deleteCard);
   likeButton.addEventListener("click", likeCard);
