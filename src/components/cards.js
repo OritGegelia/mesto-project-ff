@@ -1,31 +1,6 @@
-export {initialCards, createCard, deleteCard, likeCard}
+export { createCard, deleteCard, likeCard };
 
-const initialCards = [
-  {
-    name: "Архыз",
-    link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/arkhyz.jpg",
-  },
-  {
-    name: "Челябинская область",
-    link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/chelyabinsk-oblast.jpg",
-  },
-  {
-    name: "Иваново",
-    link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/ivanovo.jpg",
-  },
-  {
-    name: "Камчатка",
-    link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kamchatka.jpg",
-  },
-  {
-    name: "Холмогорский район",
-    link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kholmogorsky-rayon.jpg",
-  },
-  {
-    name: "Байкал",
-    link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/baikal.jpg",
-  }
-];
+import { irrevDeleteCard, addCardLike, removeCardLike } from "./api.js";
 
 const cardTemplate = document.querySelector("#card-template").content;
 
@@ -42,8 +17,13 @@ function createCard(card, deleteCard, likeCard, imagePopupOpener) {
   cardElement.querySelector(".card__title").textContent = card.name;
   cardElement.querySelector(".card__image").src = card.link;
   cardElement.querySelector(".card__image").alt = card.name;
+  cardElement.querySelector(".card__like-container").textContent =
+    card.likes.length;
 
-  deleteButton.addEventListener("click", deleteCard);
+  deleteButton.addEventListener("click", (evt) => {
+    deleteCard(evt, card._id);
+  });
+
   likeButton.addEventListener("click", likeCard);
   cardElement.addEventListener("click", imagePopupOpener);
 
@@ -52,15 +32,27 @@ function createCard(card, deleteCard, likeCard, imagePopupOpener) {
 
 // Удаление карточки
 
-function deleteCard(evt) {
-  const card = evt.target.closest(".places__item");
-  card.remove();
+function deleteCard(evt, cardID) {
+  irrevDeleteCard(cardID).then(() => evt.target.closest(".card").remove());
 }
 
 // Лайк карточки
 
-function likeCard(evt) {
-  if (evt.target.classList.contains("card__like-button")) {
-    evt.target.classList.toggle("card__like-button_is-active");
+// function likeCard(evt) {
+//   if (evt.target.classList.contains("card__like-button")) {
+//     evt.target.classList.toggle("card__like-button_is-active");
+//   }
+// }
+
+function likeCard(evt, cardID) {
+  if (
+    evt.target.classList.contains("card__like-button") &&
+    !evt.target.classList.contains("card__like-button_is-active")
+  ) {
+    addCardLike(cardID);
+    evt.target.classList.add("card__like-button_is-active");
+  } else {
+    removeCardLike(cardID);
+    evt.target.classList.remove("card__like-button_is-active");
   }
 }
