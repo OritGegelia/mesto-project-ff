@@ -1,6 +1,10 @@
 import "./pages/index.css";
 
-import { createCard, deleteCard, likeCard } from "./components/cards.js";
+import { 
+  createCard, 
+  deleteCard, 
+  likeCard 
+} from "./components/cards.js";
 
 import {
   escapeCloseModal,
@@ -10,7 +14,14 @@ import {
 
 import { setEventListeners } from "./components/validation.js";
 
-import { changeUserProfile, addNewCard, currentUserData, initialCards } from "./components/api.js";
+import { 
+  changeUserProfile, 
+  addNewCard, 
+  currentUserData, 
+  initialCards, 
+  changeUserAvatar,
+  currentUserAvatar
+} from "./components/api.js";
 
 const cardsContainer = document.querySelector(".places__list");
 
@@ -31,13 +42,19 @@ const placeLink = addFormElement.querySelector('input[name="link"]');
 const imagePopup = document.querySelector(".popup_type_image");
 const cardPopupImage = document.querySelector(".popup__image");
 
-const profileUserAvatar = document.querySelector('.profile__image')
 const avatarPopup = document.querySelector(".popup_type_avatar");
 const avatarEdit = document.querySelector(".profile__image");
 const avatarFormElement = document.querySelector('form[name="edit-avatar"]');
+const avatarNewLink = avatarFormElement.querySelector('input[name="link"]')
 
 document.addEventListener('DOMContentLoaded', function () {
   currentUserData(profileName, profileJob);
+})
+
+document.addEventListener('DOMContentLoaded', function() {
+  currentUserAvatar(avatarEdit).then((result) => {
+    avatarEdit.src = result.avatar;
+  })
 })
 
 // Добавление новой карточки на страницу
@@ -77,8 +94,7 @@ avatarEdit.addEventListener("click", () => popupHandleOpener(avatarPopup));
 // Форма редактирования аватара
 
 function handleEditAvatar(evt) {
-  evt.preventDefault();
-  changeUserProfile(profileUserAvatar)
+  changeUserAvatar(avatarNewLink)
   avatarFormElement.reset();
 }
 

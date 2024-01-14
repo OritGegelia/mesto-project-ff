@@ -6,25 +6,42 @@ export {
   initialCards, 
   addCardLike,
   removeCardLike,
-  changeUserAvatar
+  changeUserAvatar,
+  currentUserAvatar
  }
 
 const config = {
-  baseUrl: 'https://nomoreparties.co/v1/wff-cohort-4',
+  Url: 'https://nomoreparties.co/v1/wff-cohort-4',
   headers: {
     authorization: '31536b87-2f99-402f-bf92-fda5063b463d',
     'Content-Type': 'application/json',
   },
 };
 
+// Вывод текущего аватара на страницу
+
+const currentUserAvatar = (avatarEdit) => {
+  return fetch(`${config.Url}/users/me`, {
+    method: 'GET',
+    headers: config.headers,
+  }).then((res) => {
+    if (res.ok) {
+    return res.json();
+  }
+  return Promise.reject(
+    `Ошибка ${res.status} при запросе данных`
+  );
+  })
+}
+
 // Смена аватара 
 
-const changeUserAvatar = (profileUserAvatar) => {
-  return fetch(`${config.baseUrl}/users/me/avatar`, {
+const changeUserAvatar = (avatarNewLink) => {
+  return fetch(`${config.Url}/users/me/avatar`, {
     method: 'PATCH',
     headers: config.headers,
     body: JSON.stringify({
-      avatar: profileUserAvatar.src,
+      avatar: avatarNewLink.value,
     }),
   }).then((res) => {
     if (res.ok) {
@@ -39,7 +56,7 @@ const changeUserAvatar = (profileUserAvatar) => {
 //Cнятие лайка
 
 const removeCardLike = (cardID) => {
-  return fetch(`${config.baseUrl}/cards/likes/${cardID}`, {
+  return fetch(`${config.Url}/cards/likes/${cardID}`, {
     method: 'DELETE',
     headers: config.headers,
   }).then((res) => {
@@ -55,7 +72,7 @@ const removeCardLike = (cardID) => {
 //Постановка лайка
 
 const addCardLike = (cardID) => {
-  return fetch(`${config.baseUrl}/cards/likes/${cardID}`, {
+  return fetch(`${config.Url}/cards/likes/${cardID}`, {
     method: 'PUT',
     headers: config.headers,
   }).then((res) => {
@@ -72,7 +89,7 @@ const addCardLike = (cardID) => {
 // Загрузка карточек с сервера
 
 const initialCards = () => {
-  return fetch(`${config.baseUrl}/cards`, {
+  return fetch(`${config.Url}/cards`, {
     method: 'GET',
     headers: config.headers,
   }).then((res) => {
@@ -88,7 +105,7 @@ const initialCards = () => {
 // Загрузка актуальных данных пользователя
 
 const currentUserData = (profileName, profileJob) => {
-  fetch(`${config.baseUrl}/users/me`, {
+  fetch(`${config.Url}/users/me`, {
     method: 'GET',
     headers: config.headers,
   })
@@ -105,7 +122,7 @@ const currentUserData = (profileName, profileJob) => {
 // Редактирование данных пользователя
 
 const changeUserProfile = (nameInput, jobInput) => {
-  fetch(`${config.baseUrl}/users/me`, {
+  fetch(`${config.Url}/users/me`, {
     method: "PATCH",
     headers: config.headers,
     body: JSON.stringify({
@@ -125,7 +142,7 @@ const changeUserProfile = (nameInput, jobInput) => {
 // Добавление карточки на страницу
 
 const addNewCard = (placeName, placeLink) => {
-  return fetch(`${config.baseUrl}/cards`, {
+  return fetch(`${config.Url}/cards`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -147,7 +164,7 @@ const addNewCard = (placeName, placeLink) => {
 // Удаление карточки
 
 const irrevDeleteCard = (cardID) => {
-  return fetch(`${config.baseUrl}/cards/${cardID}`, {
+  return fetch(`${config.Url}/cards/${cardID}`, {
     method: 'DELETE',
     headers: config.headers,
   }).then((res) => {
