@@ -1,4 +1,5 @@
 .profile__image {
+  position: relative;
   width: 120px;
   height: 120px;
   -webkit-border-radius: 50%;
@@ -7,12 +8,44 @@
   background-size: cover;
   background-position: center;
   margin: 0 29px 0 0;
+  z-index: 1;
 }
 
 .profile__image:hover {
   opacity: 0.5;
   animation: hover-shadow ease-in-out 0.1s;
+  z-index: 0;
 }
+
+.profile__image::after {
+  content: 'test';
+  position: absolute;
+  border: 4px solid red;
+  background-position: center;
+  width: 40px;
+  height: 40px;
+  z-index: 2;
+  left: 0;
+}
+
+/* .profile__image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-color: rgba(0, 0, 0, 0.8);
+  background-image: url('../../../images/Vector.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: ;
+  transition: opacity 0.2s linear;
+} */
+
+/* .profile__image:hover:after {
+  cursor: pointer;
+  opacity: 0.5;
+  animation: hover-shadow ease-in-out 0.1s;
+} */
 
 @keyframes hover-shadow {
   from {
