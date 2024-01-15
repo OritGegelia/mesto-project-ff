@@ -1,10 +1,27 @@
-export {setEventListeners}
+export { setEventListeners, clearValidation };
+
+// Очистить ошибки валидации
+
+const clearValidation = (formElement, clearValidationSettingsObject) => {
+  const inputList = Array.from(formElement.querySelectorAll(clearValidationSettingsObject.popupInput));
+
+  inputList.forEach((inputElement) => {
+    const formError = formElement.querySelector(`.${inputElement.id}-error`);
+    inputElement.classList.remove(clearValidationSettingsObject.inputError);
+    formError.textContent = "";
+    formError.classList.remove(clearValidationSettingsObject.inputTextError);
+  });
+};
 
 // Показать ошибку
 
-const showInputError = (formElement, inputElement, errorMessage, validationSettingsObject) => {
-
-  const formError = formElement.querySelector(`.${inputElement.id}-error`)
+const showInputError = (
+  formElement,
+  inputElement,
+  errorMessage,
+  validationSettingsObject
+) => {
+  const formError = formElement.querySelector(`.${inputElement.id}-error`);
 
   inputElement.classList.add(validationSettingsObject.inputError);
   formError.textContent = errorMessage;
@@ -13,12 +30,15 @@ const showInputError = (formElement, inputElement, errorMessage, validationSetti
 
 //  Скрыть ошибку
 
-const hideInputError = (formElement, inputElement, validationSettingsObject) => {
+const hideInputError = (
+  formElement,
+  inputElement,
+  validationSettingsObject
+) => {
+  const formError = formElement.querySelector(`.${inputElement.id}-error`);
 
-  const formError = formElement.querySelector(`.${inputElement.id}-error`)
-  
   inputElement.classList.remove(validationSettingsObject.inputError);
-  formError.textContent = '';
+  formError.textContent = "";
   formError.classList.remove(validationSettingsObject.inputTextError);
 };
 
@@ -28,24 +48,28 @@ const formIsValid = (formElement, inputElement, validationSettingsObject) => {
   if (inputElement.validity.patternMismatch) {
     inputElement.setCustomValidity(inputElement.dataset.errorMessage);
   } else {
-    inputElement.setCustomValidity('');
+    inputElement.setCustomValidity("");
   }
 
   if (!inputElement.validity.valid) {
-    showInputError(formElement, inputElement, inputElement.validationMessage, validationSettingsObject);
+    showInputError(
+      formElement,
+      inputElement,
+      inputElement.validationMessage,
+      validationSettingsObject
+    );
   } else {
     hideInputError(formElement, inputElement, validationSettingsObject);
   }
-}
-
+};
 
 // Блокировка кнопки при невалидных данных
 
 const containInvalidInput = (inputList) => {
   return inputList.some((inputElement) => {
     return !inputElement.validity.valid;
-  })
-}
+  });
+};
 
 const invalidButtonDisabling = (inputList, buttonElement) => {
   if (containInvalidInput(inputList)) {
@@ -53,18 +77,22 @@ const invalidButtonDisabling = (inputList, buttonElement) => {
   } else {
     buttonElement.disabled = false;
   }
-}
+};
 
 // Навешиватель слушателей на все инпуты.
 
 const setEventListeners = (formElement, validationSettingsObject) => {
-  const inputList = Array.from(formElement.querySelectorAll(validationSettingsObject.popupInput));
-  const buttonElement = formElement.querySelector(validationSettingsObject.popupButton)
+  const inputList = Array.from(
+    formElement.querySelectorAll(validationSettingsObject.popupInput)
+  );
+  const buttonElement = formElement.querySelector(
+    validationSettingsObject.popupButton
+  );
 
-  invalidButtonDisabling(inputList, buttonElement)
-  
+  invalidButtonDisabling(inputList, buttonElement);
+
   inputList.forEach((inputElement) => {
-    inputElement.addEventListener('input', function () {
+    inputElement.addEventListener("input", function () {
       formIsValid(formElement, inputElement, validationSettingsObject);
       invalidButtonDisabling(inputList, buttonElement);
     });

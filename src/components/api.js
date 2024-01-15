@@ -18,6 +18,10 @@ const config = {
   },
 };
 
+// const countOfLikes = (cardID) => {
+//   return fetch
+// }
+
 // Вывод текущего аватара на страницу
 
 const currentUserAvatar = (avatarEdit) => {
@@ -61,7 +65,7 @@ const removeCardLike = (cardID) => {
     headers: config.headers,
   }).then((res) => {
     if (res.ok) {
-      return 'Успешное удаление';
+      return res.json();
     }
     return Promise.reject(
       `Ошибка ${res.status} при снятии лайка`
@@ -144,9 +148,7 @@ const changeUserProfile = (nameInput, jobInput) => {
 const addNewCard = (placeName, placeLink) => {
   return fetch(`${config.Url}/cards`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: config.headers,
     body: JSON.stringify({
       name: placeName.value,
       link: placeLink.value,

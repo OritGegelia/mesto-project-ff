@@ -1,10 +1,6 @@
 import "./pages/index.css";
 
-import { 
-  createCard, 
-  deleteCard, 
-  likeCard 
-} from "./components/cards.js";
+import { createCard, deleteCard, likeCard } from "./components/cards.js";
 
 import {
   escapeCloseModal,
@@ -12,15 +8,15 @@ import {
   popupHandleCloser,
 } from "./components/module.js";
 
-import { setEventListeners } from "./components/validation.js";
+import { setEventListeners, clearValidation } from "./components/validation.js";
 
-import { 
-  changeUserProfile, 
-  addNewCard, 
-  currentUserData, 
-  initialCards, 
+import {
+  changeUserProfile,
+  addNewCard,
+  currentUserData,
+  initialCards,
   changeUserAvatar,
-  currentUserAvatar
+  currentUserAvatar,
 } from "./components/api.js";
 
 const cardsContainer = document.querySelector(".places__list");
@@ -45,17 +41,23 @@ const cardPopupImage = document.querySelector(".popup__image");
 const avatarPopup = document.querySelector(".popup_type_avatar");
 const avatarEdit = document.querySelector(".profile__image");
 const avatarFormElement = document.querySelector('form[name="edit-avatar"]');
-const avatarNewLink = avatarFormElement.querySelector('input[name="link"]')
+const avatarNewLink = avatarFormElement.querySelector('input[name="link"]');
 
-document.addEventListener('DOMContentLoaded', function () {
+const clearValidationSettingsObject = {
+    popupInput: ".popup__input",
+    inputError: "popup__input-error",
+    inputTextError: "popup__input-error-text-active",
+}
+
+document.addEventListener("DOMContentLoaded", function () {
   currentUserData(profileName, profileJob);
-})
+});
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener("DOMContentLoaded", function () {
   currentUserAvatar(avatarEdit).then((result) => {
     avatarEdit.src = result.avatar;
-  })
-})
+  });
+});
 
 // Добавление новой карточки на страницу
 
@@ -85,8 +87,9 @@ editPopupButton.addEventListener("click", () => {
   popupHandleOpener(editPopup);
   nameInput.value = profileName.textContent;
   jobInput.value = profileJob.textContent;
-});
 
+  clearValidation(editPopup, clearValidationSettingsObject);
+});
 
 avatarPopup.addEventListener("submit", () => popupHandleCloser(avatarPopup));
 avatarEdit.addEventListener("click", () => popupHandleOpener(avatarPopup));
@@ -94,7 +97,7 @@ avatarEdit.addEventListener("click", () => popupHandleOpener(avatarPopup));
 // Форма редактирования аватара
 
 function handleEditAvatar(evt) {
-  changeUserAvatar(avatarNewLink)
+  changeUserAvatar(avatarNewLink);
   avatarFormElement.reset();
 }
 
@@ -118,14 +121,15 @@ editFormElement.addEventListener("submit", handleFormSubmit);
 function handleAddSubmit(evt) {
   evt.preventDefault();
 
-  addNewCard(placeName, placeLink)
-    .then((card) => {
-      addCard(card);
-      addFormElement.reset();
+  addNewCard(placeName, placeLink).then((card) => {
+    addCard(card);
+    addFormElement.reset();
   });
 }
 
-addFormElement.addEventListener("submit", handleAddSubmit);
+addFormElement.addEventListener("submit", handleAddSubmit, () => {
+  clearValidation(addFormElement, clearValidationSettingsObject)
+});
 
 // Открытие попапа с картинкой
 
@@ -171,4 +175,3 @@ enableValidation({
   inputError: "popup__input-error",
   inputTextError: "popup__input-error-text-active",
 });
-
