@@ -7,7 +7,6 @@ export {
   addCardLike,
   removeCardLike,
   changeUserAvatar,
-  currentUserAvatar
  }
 
 const config = {
@@ -17,26 +16,6 @@ const config = {
     'Content-Type': 'application/json',
   },
 };
-
-// const countOfLikes = (cardID) => {
-//   return fetch
-// }
-
-// Вывод текущего аватара на страницу
-
-const currentUserAvatar = (avatarEdit) => {
-  return fetch(`${config.Url}/users/me`, {
-    method: 'GET',
-    headers: config.headers,
-  }).then((res) => {
-    if (res.ok) {
-    return res.json();
-  }
-  return Promise.reject(
-    `Ошибка ${res.status} при запросе данных`
-  );
-  })
-}
 
 // Смена аватара 
 
@@ -108,19 +87,19 @@ const initialCards = () => {
 
 // Загрузка актуальных данных пользователя
 
-const currentUserData = (profileName, profileJob) => {
-  fetch(`${config.Url}/users/me`, {
+const currentUserData = () => {
+  return fetch(`${config.Url}/users/me`, {
     method: 'GET',
     headers: config.headers,
   })
   .then((res) => {
     if (res.ok) {
       return res.json();
-    }})
-    .then((result) => {
-      profileName.textContent = result.name;
-      profileJob.textContent = result.about;
-    });
+    }
+    return Promise.reject(
+      `Ошибка ${res.status} при загрузке данных о пользователе`
+    );
+  })
 };
 
 // Редактирование данных пользователя
@@ -140,6 +119,8 @@ const changeUserProfile = (nameInput, jobInput) => {
     return Promise.reject(
       `Ошибка ${res.status} при изменении данных пользователя`
     );
+  }).catch((err) => {
+    console.log(err);
   });
 };
 
