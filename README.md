@@ -10,4 +10,5 @@
 (Мне определенно следует больше спать)
 
 [Ccылка на репозиторий](https://github.com/OritGegelia/mesto-project-ff.git)
+[Ссылка на githubPages](https://oritgegelia.github.io/mesto-project-ff/)
 
