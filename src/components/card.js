@@ -1,10 +1,6 @@
 export { createCard, deleteCard, likeCard };
 
-import {
-  irrevDeleteCard,
-  addCardLike,
-  removeCardLike,
-} from "./api.js";
+import { irrevDeleteCard, addCardLike, removeCardLike } from "./api.js";
 
 const cardTemplate = document.querySelector("#card-template").content;
 
@@ -26,11 +22,12 @@ function createCard(card, deleteCard, likeCard, imagePopupOpener, profileId) {
 
   countForLikes.textContent = card.likes.length;
 
-  if (isOwnerCard(card.owner._id, deleteButton, profileId))
-   {
+  if (card.owner._id === profileId) {
     deleteButton.addEventListener("click", (evt) => {
       deleteCard(evt, card._id);
     });
+  } else {
+    deleteButton.classList.add("card__delete-button-hide");
   }
 
   likeButton.addEventListener("click", (evt) => {
@@ -42,15 +39,6 @@ function createCard(card, deleteCard, likeCard, imagePopupOpener, profileId) {
   return cardElement;
 }
 
-// Определение ID владельца
-
-function isOwnerCard(cardOwnerId, button, profileId) {
-  if (cardOwnerId !== profileId) {
-    button.classList.add('card__delete-button-hide');
-  } 
-  return true
-}
-
 // Удаление карточки
 
 function deleteCard(evt, cardID) {
@@ -60,9 +48,7 @@ function deleteCard(evt, cardID) {
 // Лайк карточки
 
 function likeCard(evt, cardID, countForLikes) {
-  if (
-    evt.target.classList.contains("card__like-button") &&
-    !evt.target.classList.contains("card__like-button_is-active")
+  if (!evt.target.classList.contains("card__like-button_is-active")
   ) {
     addCardLike(cardID).then((res) => {
       countForLikes.textContent = res.likes.length;

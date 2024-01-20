@@ -1,15 +1,11 @@
-export { escapeCloseModal, popupHandleOpener, popupHandleCloser}
+export { popupHandleOpener, popupHandleCloser, closePopupByOverlay}
 
-const popupList = Array.from(document.querySelectorAll('.popup'));
-
-popupList.forEach((popup) => {
-  popup.addEventListener('mouseup', (event) => {
-    const targetClassList = event.target.classList; 
-    if (targetClassList.contains('popup') || targetClassList.contains('popup__close')) {
-      popupHandleCloser(popup); 
-    }
-  })
-}) 
+const closePopupByOverlay = evt => {
+  const targetClassList = evt.target.classList;  
+  if (targetClassList.contains('popup') || targetClassList.contains('popup__close')) { 
+    popupHandleCloser(evt.currentTarget);
+  }
+}
 
 // Закрытие по клику на escape
 
@@ -17,7 +13,7 @@ popupList.forEach((popup) => {
 function escapeCloseModal(evt) {
   if (evt.code === "Escape") {
     const popup = document.querySelector('.popup_is-opened')
-    popup.classList.remove("popup_is-opened");
+    popupHandleCloser(popup)
   }
 }
 

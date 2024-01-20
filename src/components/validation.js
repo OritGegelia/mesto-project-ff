@@ -1,15 +1,30 @@
-export { setEventListeners, clearValidation };
+export { setEventListeners, clearValidation, enableValidation };
+
+// Запускает валидацию всего и вся.
+
+function enableValidation(validationSettingsObject) {
+  const formList = Array.from(
+    document.querySelectorAll(validationSettingsObject.myForm)
+  );
+
+  formList.forEach((formElement) => {
+    formElement.addEventListener("submit", (evt) => {
+      evt.preventDefault();
+    });
+
+    setEventListeners(formElement, validationSettingsObject);
+  });
+}
 
 // Очистить ошибки валидации
 
-const clearValidation = (formElement, clearValidationSettingsObject) => {
-  const inputList = Array.from(formElement.querySelectorAll(clearValidationSettingsObject.popupInput));
+const clearValidation = (formElement, validationSettingsObject) => {
+  const inputList = Array.from(
+    formElement.querySelectorAll(validationSettingsObject.popupInput)
+  );
 
   inputList.forEach((inputElement) => {
-    const formError = formElement.querySelector(`.${inputElement.id}-error`);
-    inputElement.classList.remove(clearValidationSettingsObject.inputError);
-    formError.textContent = "";
-    formError.classList.remove(clearValidationSettingsObject.inputTextError);
+    hideInputError(formElement, inputElement, validationSettingsObject);
   });
 };
 
@@ -65,14 +80,14 @@ const formIsValid = (formElement, inputElement, validationSettingsObject) => {
 
 // Блокировка кнопки при невалидных данных
 
-const containInvalidInput = (inputList) => {
+const hasInvalidInput = (inputList) => {
   return inputList.some((inputElement) => {
     return !inputElement.validity.valid;
   });
 };
 
-const invalidButtonDisabling = (inputList, buttonElement) => {
-  if (containInvalidInput(inputList)) {
+const toggleButtonState = (inputList, buttonElement) => {
+  if (hasInvalidInput(inputList)) {
     buttonElement.disabled = true;
   } else {
     buttonElement.disabled = false;
@@ -89,12 +104,12 @@ const setEventListeners = (formElement, validationSettingsObject) => {
     validationSettingsObject.popupButton
   );
 
-  invalidButtonDisabling(inputList, buttonElement);
+  toggleButtonState(inputList, buttonElement);
 
   inputList.forEach((inputElement) => {
     inputElement.addEventListener("input", function () {
       formIsValid(formElement, inputElement, validationSettingsObject);
-      invalidButtonDisabling(inputList, buttonElement);
+      toggleButtonState(inputList, buttonElement);
     });
   });
 };

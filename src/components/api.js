@@ -3,7 +3,7 @@ export {
   addNewCard, 
   irrevDeleteCard, 
   currentUserData, 
-  initialCards, 
+  getInitialCards, 
   addCardLike,
   removeCardLike,
   changeUserAvatar,
@@ -24,7 +24,7 @@ const changeUserAvatar = (avatarNewLink) => {
     method: 'PATCH',
     headers: config.headers,
     body: JSON.stringify({
-      avatar: avatarNewLink.value,
+      avatar: avatarNewLink,
     }),
   }).then((res) => {
     if (res.ok) {
@@ -71,7 +71,7 @@ const addCardLike = (cardID) => {
 
 // Загрузка карточек с сервера
 
-const initialCards = () => {
+const getInitialCards = () => {
   return fetch(`${config.Url}/cards`, {
     method: 'GET',
     headers: config.headers,
@@ -105,7 +105,7 @@ const currentUserData = () => {
 // Редактирование данных пользователя
 
 const changeUserProfile = (nameInput, jobInput) => {
-  fetch(`${config.Url}/users/me`, {
+  return fetch(`${config.Url}/users/me`, {
     method: "PATCH",
     headers: config.headers,
     body: JSON.stringify({

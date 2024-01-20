@@ -1,20 +1,20 @@
 import "./pages/index.css";
 
-import { createCard, deleteCard, likeCard } from "./components/cards.js";
+import { createCard, deleteCard, likeCard } from "./components/card.js";
 
 import {
-  escapeCloseModal,
+  closePopupByOverlay,
   popupHandleOpener,
   popupHandleCloser,
 } from "./components/module.js";
 
-import { setEventListeners, clearValidation } from "./components/validation.js";
+import { clearValidation, enableValidation } from "./components/validation.js";
 
 import {
   changeUserProfile,
   addNewCard,
   currentUserData,
-  initialCards,
+  getInitialCards,
   changeUserAvatar,
 } from "./components/api.js";
 
@@ -70,17 +70,25 @@ function addCard(card, profileId) {
   return newCard;
 }
 
-Promise.all([currentUserData(), initialCards()]).then(([profile, cards]) => {
-  let profileId = profile._id;
+let profileId;
+
+Promise.all([currentUserData(), getInitialCards()]).then(([profile, cards]) => {
+  profileId = profile._id;
+  const newAvatarUrl = profile.avatar;
   profileName.textContent = profile.name;
   profileJob.textContent = profile.about;
-  let newAvatarUrl = profile.avatar;
 
   avatarInlineStyles.backgroundImage = `url('${newAvatarUrl}')`;
 
   cards.forEach((card) => {
     cardsContainer.append(addCard(card, profileId));
   });
+});
+
+
+const popupList = Array.from(document.querySelectorAll('.popup'));
+popupList.forEach((popup) => { 
+  popup.addEventListener('mouseup', closePopupByOverlay)
 });
 
 // Изменение текста кнопки
@@ -126,7 +134,9 @@ avatarPopupSaveButton.addEventListener("click", () => {
 // Форма редактирования аватара
 
 function handleEditAvatar(evt) {
-  changeUserAvatar(avatarNewLink);
+  changeUserAvatar(avatarNewLink.value).then((res) => {
+    avatarInlineStyles.backgroundImage = `url('${res.avatar}')`;
+  });
   avatarFormElement.reset();
 }
 
@@ -134,16 +144,16 @@ avatarFormElement.addEventListener("submit", handleEditAvatar);
 
 // Форма редактирования профиля
 
-function handleFormSubmit(evt) {
+function handleEditSubmit(evt) {
   evt.preventDefault();
 
-  profileName.textContent = nameInput.value;
-  profileJob.textContent = jobInput.value;
-
-  changeUserProfile(nameInput, jobInput)
+  changeUserProfile(nameInput, jobInput).then(() => {
+    profileName.textContent = nameInput.value;
+    profileJob.textContent = jobInput.value;
+  })
 }
 
-editFormElement.addEventListener("submit", handleFormSubmit);
+editFormElement.addEventListener("submit", handleEditSubmit);
 
 // Форма добавления карточки
 
@@ -151,7 +161,7 @@ function handleAddSubmit(evt) {
   evt.preventDefault();
 
   addNewCard(placeName, placeLink).then((card) => {
-    addCard(card);
+    addCard(card, profileId);
     addFormElement.reset();
   }).catch((err) => {
     console.log(err);
@@ -179,24 +189,6 @@ function imagePopupOpener(evt) {
   cardPopupImage.alt = cardImage.alt;
 
   popupHandleOpener(imagePopup);
-
-  document.addEventListener("keydown", escapeCloseModal);
-}
-
-// Запускает валидацию всего и вся.
-
-function enableValidation(validationSettingsObject) {
-  const formList = Array.from(
-    document.querySelectorAll(validationSettingsObject.myForm)
-  );
-
-  formList.forEach((formElement) => {
-    formElement.addEventListener("submit", (evt) => {
-      evt.preventDefault();
-    });
-
-    setEventListeners(formElement, validationSettingsObject);
-  });
 }
 
 enableValidation(validationSettingsObject);
