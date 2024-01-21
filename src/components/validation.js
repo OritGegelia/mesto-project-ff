@@ -23,9 +23,13 @@ const clearValidation = (formElement, validationSettingsObject) => {
     formElement.querySelectorAll(validationSettingsObject.popupInput)
   );
 
+  const buttonElement = formElement.querySelector(validationSettingsObject.popupButton);
+
   inputList.forEach((inputElement) => {
     hideInputError(formElement, inputElement, validationSettingsObject);
   });
+
+  toggleButtonState(inputList, buttonElement)
 };
 
 // Показать ошибку
@@ -87,11 +91,7 @@ const hasInvalidInput = (inputList) => {
 };
 
 const toggleButtonState = (inputList, buttonElement) => {
-  if (hasInvalidInput(inputList)) {
-    buttonElement.disabled = true;
-  } else {
-    buttonElement.disabled = false;
-  }
+  buttonElement.disabled = hasInvalidInput(inputList)
 };
 
 // Навешиватель слушателей на все инпуты.

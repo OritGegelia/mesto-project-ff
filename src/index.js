@@ -80,8 +80,8 @@ Promise.all([currentUserData(), getInitialCards()]).then(([profile, cards]) => {
 
   avatarInlineStyles.backgroundImage = `url('${newAvatarUrl}')`;
 
-  cards.forEach((card) => {
-    cardsContainer.append(addCard(card, profileId));
+  cards.reverse().forEach((card) => {
+    addCard(card, profileId);
   });
 });
 

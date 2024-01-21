@@ -1,162 +1,114 @@
 export {
-  changeUserProfile, 
-  addNewCard, 
-  irrevDeleteCard, 
-  currentUserData, 
-  getInitialCards, 
+  changeUserProfile,
+  addNewCard,
+  irrevDeleteCard,
+  currentUserData,
+  getInitialCards,
   addCardLike,
   removeCardLike,
   changeUserAvatar,
- }
+};
 
 const config = {
-  Url: 'https://nomoreparties.co/v1/wff-cohort-4',
+  Url: "https://nomoreparties.co/v1/wff-cohort-4",
   headers: {
-    authorization: '31536b87-2f99-402f-bf92-fda5063b463d',
-    'Content-Type': 'application/json',
+    authorization: "31536b87-2f99-402f-bf92-fda5063b463d",
+    "Content-Type": "application/json",
   },
 };
 
-// Смена аватара 
+// Смена аватара
 
-const changeUserAvatar = (avatarNewLink) => {
+const changeUserAvatar = (avatar) => {
   return fetch(`${config.Url}/users/me/avatar`, {
-    method: 'PATCH',
+    method: "PATCH",
     headers: config.headers,
     body: JSON.stringify({
-      avatar: avatarNewLink,
+      avatar: avatar,
     }),
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(
-      `Ошибка ${res.status} при изменении аватара`
-    );
-  })
-}
+  }).then(handleResponse);
+};
 
 //Cнятие лайка
 
 const removeCardLike = (cardID) => {
   return fetch(`${config.Url}/cards/likes/${cardID}`, {
-    method: 'DELETE',
+    method: "DELETE",
     headers: config.headers,
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(
-      `Ошибка ${res.status} при снятии лайка`
-    );
-  });
-}
+  }).then(handleResponse);
+};
 
 //Постановка лайка
 
 const addCardLike = (cardID) => {
   return fetch(`${config.Url}/cards/likes/${cardID}`, {
-    method: 'PUT',
+    method: "PUT",
     headers: config.headers,
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(
-      `Ошибка ${res.status} при постановке лайка`
-    )
-  })
-}
-
+  }).then(handleResponse);
+};
 
 // Загрузка карточек с сервера
 
 const getInitialCards = () => {
   return fetch(`${config.Url}/cards`, {
-    method: 'GET',
+    method: "GET",
     headers: config.headers,
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(
-      `Ошибка ${res.status} при загрузке карточек`
-    );
-  })
-}
+  }).then(handleResponse);
+};
 
 // Загрузка актуальных данных пользователя
 
 const currentUserData = () => {
   return fetch(`${config.Url}/users/me`, {
-    method: 'GET',
+    method: "GET",
     headers: config.headers,
-  })
-  .then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(
-      `Ошибка ${res.status} при загрузке данных о пользователе`
-    );
-  })
+  }).then(handleResponse);
 };
 
 // Редактирование данных пользователя
 
-const changeUserProfile = (nameInput, jobInput) => {
+const changeUserProfile = (name, job) => {
   return fetch(`${config.Url}/users/me`, {
     method: "PATCH",
     headers: config.headers,
     body: JSON.stringify({
-      name: nameInput.value,
-      about: jobInput.value,
+      name: name.value,
+      about: job.value,
     }),
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(
-      `Ошибка ${res.status} при изменении данных пользователя`
-    );
-  }).catch((err) => {
-    console.log(err);
-  });
+  })
+    .then(handleResponse)
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 // Добавление карточки на страницу
 
-const addNewCard = (placeName, placeLink) => {
+const addNewCard = (name, link) => {
   return fetch(`${config.Url}/cards`, {
     method: "POST",
     headers: config.headers,
     body: JSON.stringify({
-      name: placeName.value,
-      link: placeLink.value,
+      name: name.value,
+      link: link.value,
     }),
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(
-      `Ошибка ${res.status} при добавлении на сервер`
-    );
-  });
+  }).then(handleResponse);
 };
 
 // Удаление карточки
 
 const irrevDeleteCard = (cardID) => {
   return fetch(`${config.Url}/cards/${cardID}`, {
-    method: 'DELETE',
+    method: "DELETE",
     headers: config.headers,
-  }).then((res) => {
-    if (res.ok) {
-      return 'Успешное удаление';
-    }
-    return Promise.reject(
-      `Ошибка при удалении карточки с сервера. Ошибка ${res.status}`
-    );
-  });
-}
+  }).then(handleResponse);
+};
 
+// Обработчик ошибок
+
+const handleResponse = (res) => {
+  if (res.ok) {
+    return res.json();
+  }
+  return Promise.reject(`Ошибка ${res.status}`);
+};

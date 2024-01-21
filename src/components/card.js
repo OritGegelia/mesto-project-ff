@@ -48,16 +48,13 @@ function deleteCard(evt, cardID) {
 // Лайк карточки
 
 function likeCard(evt, cardID, countForLikes) {
-  if (!evt.target.classList.contains("card__like-button_is-active")
-  ) {
-    addCardLike(cardID).then((res) => {
-      countForLikes.textContent = res.likes.length;
-      evt.target.classList.add("card__like-button_is-active");
-    });
-  } else {
-    removeCardLike(cardID).then((res) => {
-      countForLikes.textContent = res.likes.length;
-      evt.target.classList.remove("card__like-button_is-active");
-    });
+  if (!evt.target.classList.contains("card__like-button_is-active")) {
+    const likeMethod = isLiked ? deleteCard : likeCard;
+    likeMethod(cardID)
+      .then((res) => {
+        countForLikes.textContent = res.likes.length;
+        likeButton.classList.toggle("card__like-button_is-active");
+      })
+      .catch((err) => console.log(err));
   }
 }
