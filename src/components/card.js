@@ -6,7 +6,14 @@ const cardTemplate = document.querySelector("#card-template").content;
 
 // Создание карточки из темплейта
 
-function createCard(card, deleteCard, likeCard, imagePopupOpener, profileId) {
+function createCard(
+  card,
+  deleteCard,
+  likeCard,
+  imagePopupOpener,
+  profileId,
+  hasProfileLike
+) {
   const cardElement = cardTemplate
     .querySelector(".places__item")
     .cloneNode(true);
@@ -35,6 +42,7 @@ function createCard(card, deleteCard, likeCard, imagePopupOpener, profileId) {
   });
 
   cardElement.addEventListener("click", imagePopupOpener);
+  console.log(card);
 
   return cardElement;
 }
@@ -45,16 +53,38 @@ function deleteCard(evt, cardID) {
   irrevDeleteCard(cardID).then(() => evt.target.closest(".card").remove());
 }
 
+// Проверка наличия лайка
+
+function hasProfileLike(card, profileId) {
+  const likedCard = card.likes.some((like) => {
+    return like._id === profileId;
+  });
+  return likedCard;
+}
+
 // Лайк карточки
 
+// function likeCard(evt, cardID, countForLikes) {
+//   if (!evt.target.classList.contains("card__like-button_is-active")) {
+//     addCardLike(cardID).then((res) => {
+//       countForLikes.textContent = res.likes.length;
+//       evt.target.classList.add("card__like-button_is-active");
+//     });
+//   } else {
+//     removeCardLike(cardID).then((res) => {
+//       countForLikes.textContent = res.likes.length;
+//       evt.target.classList.remove("card__like-button_is-active");
+//     });
+//   }
+// }
+
 function likeCard(evt, cardID, countForLikes) {
-  if (!evt.target.classList.contains("card__like-button_is-active")) {
-    const likeMethod = isLiked ? deleteCard : likeCard;
-    likeMethod(cardID)
-      .then((res) => {
-        countForLikes.textContent = res.likes.length;
-        likeButton.classList.toggle("card__like-button_is-active");
-      })
-      .catch((err) => console.log(err));
-  }
+  const isLiked = evt.target.classList.contains("card__like-button_is-active");
+  const likeMethod = isLiked ? addCardLike : removeCardLike;
+  likeMethod(cardID)
+    .then((res) => {
+      countForLikes.textContent = res.likes.length;
+      evt.target.classList.toggle("card__like-button_is-active");
+    })
+    .catch((err) => console.log(err));
 }
