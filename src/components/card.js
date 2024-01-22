@@ -12,7 +12,6 @@ function createCard(
   likeCard,
   imagePopupOpener,
   profileId,
-  hasProfileLike
 ) {
   const cardElement = cardTemplate
     .querySelector(".places__item")
@@ -20,6 +19,14 @@ function createCard(
 
   const deleteButton = cardElement.querySelector(".card__delete-button");
   const likeButton = cardElement.querySelector(".card__like-button");
+
+  const hasProfileLike = card.likes.some((like) => {
+    return like._id === profileId;
+  });
+
+  if (hasProfileLike) {
+    likeButton.classList.add("card__like-button_is-active");
+  }
 
   cardElement.querySelector(".card__title").textContent = card.name;
   cardElement.querySelector(".card__image").src = card.link;
@@ -53,34 +60,11 @@ function deleteCard(evt, cardID) {
   irrevDeleteCard(cardID).then(() => evt.target.closest(".card").remove());
 }
 
-// Проверка наличия лайка
-
-function hasProfileLike(card, profileId) {
-  const likedCard = card.likes.some((like) => {
-    return like._id === profileId;
-  });
-  return likedCard;
-}
-
 // Лайк карточки
-
-// function likeCard(evt, cardID, countForLikes) {
-//   if (!evt.target.classList.contains("card__like-button_is-active")) {
-//     addCardLike(cardID).then((res) => {
-//       countForLikes.textContent = res.likes.length;
-//       evt.target.classList.add("card__like-button_is-active");
-//     });
-//   } else {
-//     removeCardLike(cardID).then((res) => {
-//       countForLikes.textContent = res.likes.length;
-//       evt.target.classList.remove("card__like-button_is-active");
-//     });
-//   }
-// }
 
 function likeCard(evt, cardID, countForLikes) {
   const isLiked = evt.target.classList.contains("card__like-button_is-active");
-  const likeMethod = isLiked ? addCardLike : removeCardLike;
+  const likeMethod = isLiked ? removeCardLike : addCardLike;
   likeMethod(cardID)
     .then((res) => {
       countForLikes.textContent = res.likes.length;
