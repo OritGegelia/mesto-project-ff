@@ -35,7 +35,6 @@ const addPopupButton = document.querySelector(".profile__add-button");
 const addFormElement = document.querySelector('form[name="new-place"]');
 const placeName = addFormElement.querySelector('input[name="place-name"]');
 const placeLink = addFormElement.querySelector('input[name="link"]');
-
 const imagePopup = document.querySelector(".popup_type_image");
 const cardPopupImage = document.querySelector(".popup__image");
 
@@ -85,33 +84,15 @@ Promise.all([currentUserData(), getInitialCards()]).then(([profile, cards]) => {
   });
 });
 
-
-const popupList = Array.from(document.querySelectorAll('.popup'));
-popupList.forEach((popup) => { 
-  popup.addEventListener('mouseup', closePopupByOverlay)
+const popupList = Array.from(document.querySelectorAll(".popup"));
+popupList.forEach((popup) => {
+  popup.addEventListener("mouseup", closePopupByOverlay);
 });
-
-// Изменение текста кнопки
-
-function changeButtonText(currentButton) {
-  switch (currentButton.textContent) {
-    case "Сохранение...":
-      setTimeout(() => {
-        currentButton.textContent = "Сохранить";
-      }, 500);
-      break;
-    default:
-      currentButton.textContent = "Сохранение...";
-  }
-}
 
 // Слушатели открытия модалок редактирования и добавления карточки и редактирования аватара
 
 addPopup.addEventListener("submit", () => popupHandleCloser(addPopup));
 addPopupButton.addEventListener("click", () => popupHandleOpener(addPopup));
-addPopupSaveButton.addEventListener("click", () => {
-  changeButtonText(addPopupSaveButton);
-});
 
 editPopup.addEventListener("submit", () => popupHandleCloser(editPopup));
 editPopupButton.addEventListener("click", () => {
@@ -121,16 +102,9 @@ editPopupButton.addEventListener("click", () => {
 
   clearValidation(editPopup, validationSettingsObject);
 });
-editPopupSaveButton.addEventListener("click", () => {
-  changeButtonText(editPopupSaveButton);
-});
 
 avatarPopup.addEventListener("submit", () => popupHandleCloser(avatarPopup));
 avatarEdit.addEventListener("click", () => popupHandleOpener(avatarPopup));
-avatarPopupSaveButton.addEventListener("click", () => {
-  changeButtonText(avatarPopupSaveButton);
-});
-
 // Форма редактирования аватара
 
 function handleEditAvatar(evt) {
@@ -150,22 +124,25 @@ function handleEditSubmit(evt) {
   changeUserProfile(nameInput, jobInput).then(() => {
     profileName.textContent = nameInput.value;
     profileJob.textContent = jobInput.value;
-  })
+  });
 }
 
 editFormElement.addEventListener("submit", handleEditSubmit);
+editPopupSaveButton.addEventListener("click", () => {});
 
 // Форма добавления карточки
 
 function handleAddSubmit(evt) {
   evt.preventDefault();
 
-  addNewCard(placeName, placeLink).then((card) => {
-    addCard(card, profileId);
-    addFormElement.reset();
-  }).catch((err) => {
-    console.log(err);
-  });;
+  addNewCard(placeName, placeLink)
+    .then((card) => {
+      addCard(card, profileId);
+      addFormElement.reset();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 }
 
 addFormElement.addEventListener("submit", handleAddSubmit, () => {

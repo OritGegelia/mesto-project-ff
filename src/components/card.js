@@ -49,8 +49,6 @@ function createCard(
   });
 
   cardElement.addEventListener("click", imagePopupOpener);
-  console.log(card);
-
   return cardElement;
 }
 
