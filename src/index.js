@@ -105,12 +105,24 @@ editPopupButton.addEventListener("click", () => {
 
 avatarPopup.addEventListener("submit", () => popupHandleCloser(avatarPopup));
 avatarEdit.addEventListener("click", () => popupHandleOpener(avatarPopup));
+
 // Форма редактирования аватара
 
 function handleEditAvatar(evt) {
-  changeUserAvatar(avatarNewLink.value).then((res) => {
-    avatarInlineStyles.backgroundImage = `url('${res.avatar}')`;
-  });
+  evt.preventDefault();
+
+  avatarPopupSaveButton.textContent = "Сохранение...";
+
+  changeUserAvatar(avatarNewLink.value)
+    .then((res) => {
+      avatarInlineStyles.backgroundImage = `url('${res.avatar}')`;
+    })
+    .finally(() => {
+      avatarPopupSaveButton.textContent = "Cохранить";
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   avatarFormElement.reset();
 }
 
@@ -118,16 +130,25 @@ avatarFormElement.addEventListener("submit", handleEditAvatar);
 
 // Форма редактирования профиля
 
-function handleEditSubmit(evt) {
+function handleEditProfileSubmit(evt) {
   evt.preventDefault();
 
-  changeUserProfile(nameInput, jobInput).then(() => {
-    profileName.textContent = nameInput.value;
-    profileJob.textContent = jobInput.value;
-  });
+  editPopupSaveButton.textContent = "Сохранение...";
+
+  changeUserProfile(nameInput.value, jobInput.value)
+    .then(() => {
+      profileName.textContent = nameInput.value;
+      profileJob.textContent = jobInput.value;
+    })
+    .finally(() => {
+      avatarPopupSaveButton.textContent = "Cохранить";
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 }
 
-editFormElement.addEventListener("submit", handleEditSubmit);
+editFormElement.addEventListener("submit", handleEditProfileSubmit);
 editPopupSaveButton.addEventListener("click", () => {});
 
 // Форма добавления карточки
@@ -135,10 +156,15 @@ editPopupSaveButton.addEventListener("click", () => {});
 function handleAddSubmit(evt) {
   evt.preventDefault();
 
-  addNewCard(placeName, placeLink)
+  addPopupSaveButton.textContent = "Сохранение...";
+
+  addNewCard(placeName.value, placeLink.value)
     .then((card) => {
       addCard(card, profileId);
       addFormElement.reset();
+    })
+    .finally(() => {
+      avatarPopupSaveButton.textContent = "Cохранить";
     })
     .catch((err) => {
       console.log(err);

@@ -72,8 +72,8 @@ const changeUserProfile = (name, job) => {
     method: "PATCH",
     headers: config.headers,
     body: JSON.stringify({
-      name: name.value,
-      about: job.value,
+      name: name,
+      about: job,
     }),
   })
     .then(handleResponse)
@@ -89,8 +89,8 @@ const addNewCard = (name, link) => {
     method: "POST",
     headers: config.headers,
     body: JSON.stringify({
-      name: name.value,
-      link: link.value,
+      name: name,
+      link: link,
     }),
   }).then(handleResponse);
 };
