@@ -1,4 +1,4 @@
-export { setEventListeners, clearValidation, enableValidation };
+export { clearValidation, enableValidation };
 
 // Запускает валидацию всего и вся.
 
@@ -23,13 +23,15 @@ const clearValidation = (formElement, validationSettingsObject) => {
     formElement.querySelectorAll(validationSettingsObject.popupInput)
   );
 
-  const buttonElement = formElement.querySelector(validationSettingsObject.popupButton);
+  const buttonElement = formElement.querySelector(
+    validationSettingsObject.popupButton
+  );
 
   inputList.forEach((inputElement) => {
     hideInputError(formElement, inputElement, validationSettingsObject);
   });
 
-  toggleButtonState(inputList, buttonElement)
+  toggleButtonState(inputList, buttonElement);
 };
 
 // Показать ошибку
@@ -61,7 +63,7 @@ const hideInputError = (
   formError.classList.remove(validationSettingsObject.inputTextError);
 };
 
-// Проверкаа формы на валидность
+// Проверка формы на валидность
 
 const formIsValid = (formElement, inputElement, validationSettingsObject) => {
   if (inputElement.validity.patternMismatch) {
@@ -91,7 +93,7 @@ const hasInvalidInput = (inputList) => {
 };
 
 const toggleButtonState = (inputList, buttonElement) => {
-  buttonElement.disabled = hasInvalidInput(inputList)
+  buttonElement.disabled = hasInvalidInput(inputList);
 };
 
 // Навешиватель слушателей на все инпуты.

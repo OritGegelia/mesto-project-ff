@@ -71,18 +71,22 @@ function addCard(card, profileId) {
 
 let profileId;
 
-Promise.all([currentUserData(), getInitialCards()]).then(([profile, cards]) => {
-  profileId = profile._id;
-  const newAvatarUrl = profile.avatar;
-  profileName.textContent = profile.name;
-  profileJob.textContent = profile.about;
+Promise.all([currentUserData(), getInitialCards()])
+  .then(([profile, cards]) => {
+    profileId = profile._id;
+    const newAvatarUrl = profile.avatar;
+    profileName.textContent = profile.name;
+    profileJob.textContent = profile.about;
 
-  avatarInlineStyles.backgroundImage = `url('${newAvatarUrl}')`;
+    avatarInlineStyles.backgroundImage = `url('${newAvatarUrl}')`;
 
-  cards.reverse().forEach((card) => {
-    addCard(card, profileId);
+    cards.reverse().forEach((card) => {
+      addCard(card, profileId);
+    });
+  })
+  .catch((err) => {
+    console.log(err);
   });
-});
 
 const popupList = Array.from(document.querySelectorAll(".popup"));
 popupList.forEach((popup) => {
@@ -130,7 +134,7 @@ avatarFormElement.addEventListener("submit", handleEditAvatar);
 
 // Форма редактирования профиля
 
-function handleEditProfileSubmit(evt) {
+function handleEditProfile(evt) {
   evt.preventDefault();
 
   editPopupSaveButton.textContent = "Сохранение...";
@@ -148,7 +152,7 @@ function handleEditProfileSubmit(evt) {
     });
 }
 
-editFormElement.addEventListener("submit", handleEditProfileSubmit);
+editFormElement.addEventListener("submit", handleEditProfile);
 editPopupSaveButton.addEventListener("click", () => {});
 
 // Форма добавления карточки

@@ -6,13 +6,7 @@ const cardTemplate = document.querySelector("#card-template").content;
 
 // Создание карточки из темплейта
 
-function createCard(
-  card,
-  deleteCard,
-  likeCard,
-  imagePopupOpener,
-  profileId,
-) {
+function createCard(card, deleteCard, likeCard, imagePopupOpener, profileId) {
   const cardElement = cardTemplate
     .querySelector(".places__item")
     .cloneNode(true);

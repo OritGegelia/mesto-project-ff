@@ -75,11 +75,7 @@ const changeUserProfile = (name, job) => {
       name: name,
       about: job,
     }),
-  })
-    .then(handleResponse)
-    .catch((err) => {
-      console.log(err);
-    });
+  }).then(handleResponse);
 };
 
 // Добавление карточки на страницу
